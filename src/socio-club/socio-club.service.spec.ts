@@ -119,7 +119,35 @@ describe('SocioClubService', () => {
 
 
 
+  it('updateMembersFromClub should must update the list of socios of a club', async () => {    
 
+    const socioToUpdate:SocioEntity = club.socios[0]
+    socioToUpdate.email="nuevo_email2@gmailtest.com"
+
+    const clubUpdated: ClubEntity = await service.updateMembersFromClub(club.id, [socioToUpdate]);
+    expect(clubUpdated.socios.length).toBe(1);
+
+    expect(clubUpdated.socios[0].email).toBe(socioToUpdate.email);
+    expect(clubUpdated.socios[0].fechaNacimiento).toStrictEqual(socioToUpdate.fechaNacimiento);
+    expect(clubUpdated.socios[0].nombreUsuario).toBe(socioToUpdate.nombreUsuario);
+  });
+
+
+  it('updateMembersFromClub an exception should be returned for a club that does not exist', async () => {
+    const socioToUpdate:SocioEntity = club.socios[0]
+    socioToUpdate.email="nuevo_email2@gmailtest.com"
+    await expect(() => service.updateMembersFromClub("0", [socioToUpdate])).rejects.toHaveProperty("message", "The club with the given id was not found.");
+  });
+
+
+  it('updateMembersFromClub an exception should be returned for a club that does not exist', async () => {
+    const newSocio: SocioEntity = await socioRepository.save({
+      nombreUsuario: faker.person.firstName(), 
+      fechaNacimiento:faker.date.between({ from: '1930-01-01', to: '2020-12-31' }),
+      email: faker.internet.email().toLowerCase()
+    });
+    await expect(() => service.updateMembersFromClub(club.id, [newSocio])).rejects.toHaveProperty("message", "The socio with the given id was not found.");
+  });
 
 
 

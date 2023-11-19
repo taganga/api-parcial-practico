@@ -5,6 +5,7 @@ import { SocioEntity } from '../socio/socio.entity';
 import { ClubEntity } from '../club/club.entity';
 import { Repository } from 'typeorm';
 import { BusinessError, BusinessLogicException } from '../shared/errors/business-errors';
+import { Faker } from '@faker-js/faker';
 
 @Injectable()
 export class SocioClubService {
@@ -57,7 +58,32 @@ export class SocioClubService {
         return clubSocios;
     }
 
+    //updateMembersFromClub: Actualizar los socios de un grupo.  
 
+    async updateMembersFromClub(clubId: string,socios:SocioEntity[]): Promise<ClubEntity> {
+        const club: ClubEntity = await this.clubRepository.findOne({ where: { id: clubId }, relations: ["socios"] });
+
+        if (!club){        
+            throw new BusinessLogicException("The club with the given id was not found.", BusinessError.NOT_FOUND)
+        }   
+        
+        let existen_todos_socios:boolean=true
+        for (let i = 0; i <socios.length; i++) {
+            const indexSocio =club.socios.findIndex(e => e.id === socios[i].id);
+            if (indexSocio == -1){ 
+                existen_todos_socios=false
+            }        
+        }
+        if(existen_todos_socios==false)
+        {
+            throw new BusinessLogicException("The socio with the given id was not found.", BusinessError.NOT_FOUND)                 
+        }
+
+        club.socios=socios
+        return await this.clubRepository.save(club);
+
+       
+    }
 
 
 
