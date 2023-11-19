@@ -16,7 +16,7 @@ export class SocioClubService {
         private readonly clubRepository: Repository<ClubEntity>
     ){}
 
-    //addMemberToClub
+    //addMemberToClub: Asociar un socio a un grupo.
     async addMemberToClub(socioId: string, clubId: string): Promise<ClubEntity> {
         const socio: SocioEntity = await this.socioRepository.findOne({where: {id: socioId}});
         if (!socio)
@@ -29,4 +29,28 @@ export class SocioClubService {
           club.socios = [...club.socios, socio];
         return await this.clubRepository.save(club);
       }
-}
+
+    //findMembersFromClub: Obtener los socios de un grupo.
+    async findMembersFromClub(clubId: string): Promise<SocioEntity[]> {
+        const club: ClubEntity = await this.clubRepository.findOne({where: {id: clubId}, relations: ["socios"]});
+        if (!club)
+          throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND)
+        
+        return club.socios;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }

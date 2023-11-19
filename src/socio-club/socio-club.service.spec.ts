@@ -78,6 +78,15 @@ describe('SocioClubService', () => {
     expect(result.socios[0].email).toBe(newSocio.email)   
   });
 
+  it('findMembersFromClub should return socios by club', async ()=>{
+    const socios: SocioEntity[] = await service.findMembersFromClub(club.id);
+    expect(socios.length).toBe(5)
+  });
+
+  it('findMembersFromClub should throw an exception for an invalid club', async () => {
+    await expect(()=> service.findMembersFromClub("0")).rejects.toHaveProperty("message", "The club with the given id was not found"); 
+  });
+
 
 
 
