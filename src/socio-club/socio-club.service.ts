@@ -85,8 +85,24 @@ export class SocioClubService {
        
     }
 
+//deleteMemberFromClub: Eliminar un socio de un grupo.
+    async deleteMemberFromClub(clubId: string, socioId: string){
+        const socio: SocioEntity = await this.socioRepository.findOne({where: {id: socioId}});
+        if (!socio)
+          throw new BusinessLogicException("The socio with the given id was not found", BusinessError.NOT_FOUND)
+     
+        const club: ClubEntity = await this.clubRepository.findOne({where: {id: clubId}, relations: ["socios"]});
+        if (!club)
+          throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND)
+     
+        const clubSocio: SocioEntity = club.socios.find(e => e.id === socio.id);
+     
+        if (!clubSocio)
+            throw new BusinessLogicException("The socio with the given id is not associated to the club", BusinessError.PRECONDITION_FAILED)
 
-
+        club.socios = club.socios.filter(e => e.id !== socioId);
+        await this.clubRepository.save(club);
+    }   
 
 
 

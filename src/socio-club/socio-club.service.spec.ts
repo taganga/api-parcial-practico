@@ -150,6 +150,28 @@ describe('SocioClubService', () => {
   });
 
 
+  it('deleteMemberFromClub should remove an socio from a club', async () => {
+    const socio: SocioEntity = sociosList[0];
+    
+    await service.deleteMemberFromClub(club.id, socio.id);
+
+    const storedClub: ClubEntity = await clubRepository.findOne({where: {id: club.id}, relations: ["socios"]});
+    const deletedSocio: SocioEntity = storedClub.socios.find(a => a.id === socio.id);
+
+    expect(deletedSocio).toBeUndefined();
+
+  });
+
+  it('deleteMemberFromClub should thrown an exception for an invalid socio', async () => {
+    await expect(()=> service.deleteMemberFromClub(club.id, "0")).rejects.toHaveProperty("message", "The socio with the given id was not found"); 
+  });
+
+  it('deleteMemberFromClub should thrown an exception for an invalid club', async () => {
+    const socio: SocioEntity = sociosList[0];
+    await expect(()=> service.deleteMemberFromClub("0", socio.id)).rejects.toHaveProperty("message", "The club with the given id was not found"); 
+  });
+
+
 
 
 
