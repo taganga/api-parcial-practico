@@ -18,7 +18,7 @@ export class SocioClubService {
     ){}
 
     //addMemberToClub: Asociar un socio a un grupo.
-    async addMemberToClub(socioId: string, clubId: string): Promise<ClubEntity> {
+    async addMemberToClub(clubId: string, socioId: string): Promise<ClubEntity> {
         const socio: SocioEntity = await this.socioRepository.findOne({where: {id: socioId}});
         if (!socio)
           throw new BusinessLogicException("The socio with the given id was not found", BusinessError.NOT_FOUND);
