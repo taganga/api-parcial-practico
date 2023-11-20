@@ -22,10 +22,16 @@ async findOne(id: string): Promise<SocioEntity> {
 }
 
 async create(socio: SocioEntity): Promise<SocioEntity> {
+  if(socio.email.indexOf("@") < 0)
+    throw new BusinessLogicException("email does not contain @", BusinessError.PRECONDITION_FAILED);
+
     return await this.socioRepository.save(socio);
 }
 
 async update(id: string, socio: SocioEntity): Promise<SocioEntity> {
+  if(socio.email.indexOf("@") < 0)
+  throw new BusinessLogicException("email does not contain @", BusinessError.PRECONDITION_FAILED);
+
     const persistedSocio: SocioEntity = await this.socioRepository.findOne({where:{id}});
     if (!persistedSocio)
       throw new BusinessLogicException("The socio with the given id was not found", BusinessError.NOT_FOUND);

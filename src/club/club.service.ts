@@ -23,14 +23,21 @@ async findOne(id: string): Promise<ClubEntity> {
 }
 
 async create(club: ClubEntity): Promise<ClubEntity> {
-    return await this.clubRepository.save(club);
+  if(club.descripcion.length > 100)
+    throw new BusinessLogicException("The maximum length of the description field is 100 characters", BusinessError.PRECONDITION_FAILED);
+    
+  return await this.clubRepository.save(club);
+    
 }
 
 async update(id: string, club: ClubEntity): Promise<ClubEntity> {
+    if(club.descripcion.length > 100)
+    throw new BusinessLogicException("The maximum length of the description field is 100 characters", BusinessError.PRECONDITION_FAILED);
+
     const persistedClub: ClubEntity = await this.clubRepository.findOne({where:{id}});
     if (!persistedClub)
-      throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND);
-    
+      throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND);         
+
     return await this.clubRepository.save({...persistedClub, ...club});
 }
 

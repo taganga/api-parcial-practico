@@ -69,7 +69,7 @@ describe('SocioClubService', () => {
         descripcion: faker.lorem.sentence(), 
         imagen: faker.image.url(),
     })
-    const result: ClubEntity = await service.addMemberToClub(newSocio.id, newClub.id);
+    const result: ClubEntity = await service.addMemberToClub( newClub.id,newSocio.id);
 
     expect(result.socios.length).toBe(1);
     expect(result.socios[0]).not.toBeNull();
